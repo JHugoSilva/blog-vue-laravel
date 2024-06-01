@@ -18,7 +18,8 @@ class AuthController extends Controller
         $user = User::create($request->getData());
 
         return response()->json([
-            'user' => $user
+           'message' => 'Created',
+           'user' => $user
         ], Response::HTTP_CREATED);
     }
 
