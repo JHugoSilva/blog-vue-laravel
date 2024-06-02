@@ -16,7 +16,6 @@ const httpCreated = async (input: any, res: any, rej: any) => {
     body: JSON.stringify(input)
   })
   const data = await response.json()
-  console.log(data.message)
 
   if (!response.ok) {
     rej(data)

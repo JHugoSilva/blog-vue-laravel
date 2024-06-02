@@ -8,13 +8,16 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+
 
 class AuthController extends Controller
 {
 
     public function register(RegisterRequest $request) {
-
+        print_r($request->all());
         $user = User::create($request->getData());
 
         return response()->json([
