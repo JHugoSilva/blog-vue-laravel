@@ -1,6 +1,6 @@
-import { APP } from '../../../shared/App'
-import { ICreatePostInput } from '../admin-types'
-import { verifyToken } from '../../../helper/verifyToken'
+import { APP } from '../../../../../shared/App'
+import { ICreatePostInput } from '../../../types/admin-types'
+import { verifyToken } from '../../../../../helper/verifyToken'
 
 export type PostResponseType = {
   message: string
@@ -8,8 +8,6 @@ export type PostResponseType = {
 
 const createPost = async (input: any, res: any, rej: any) => {
   const { headers } = verifyToken()
-  console.log('AQYU', headers)
-
   const response = await fetch(`${APP.apiUrl}/post`, {
     method: 'POST',
     headers: headers,

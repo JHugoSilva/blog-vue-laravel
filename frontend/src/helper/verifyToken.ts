@@ -5,7 +5,7 @@ export function verifyToken() {
   const config = {
     headers: {
       accept: 'application/json',
-      'content-Type': 'apllication/json',
+      'content-Type': 'application/json',
       Authorization: `Bearer ${userData?.token}`
     }
   }

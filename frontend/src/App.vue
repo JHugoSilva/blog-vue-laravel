@@ -1,6 +1,49 @@
 <script setup lang="ts">
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 import { getUserData } from './helper/getUserData';
+import { showError, successMsg } from './helper/Toatnotification';
+import { logoutUserHttp } from './views/auth/actions/LogoutUser';
+import { ILogoutInput } from './views/auth/auth-types';
+import { userIsLoggedInHttp } from './views/auth/actions/UserLoggedIn'
 const userData = getUserData()
+const router = useRouter()
+
+const logoutInput = ref<ILogoutInput>({
+  id: ''
+})
+
+const logout = async () => {
+  const userId = userData?.user?.id!
+  if (typeof userId !== 'undefined') {
+    const data: any = await logoutUserHttp(logoutInput.value)
+    localStorage.clear()
+    setTimeout(() => {
+      successMsg(data.message)
+      router.push({ name: 'login' })
+    }, 2000)
+  }
+}
+
+const userIsLoggedIn = async () => {
+  try {
+    await userIsLoggedInHttp().then((response) => {
+      if (response.message === 'Unauthenticated.') {
+        console.log('EE2');
+        router.push('/login')
+      }
+    })
+  } catch (error: any) {
+    if (error?.message === 'Unauthenticated.') {
+      router.push('/login')
+      showError(error.message)
+    }
+  }
+}
+
+onMounted(async () => {
+  await userIsLoggedIn()
+})
 </script>
 
 <template>
@@ -30,6 +73,7 @@ const userData = getUserData()
                 <hr class="dropdown-divider">
               </li>
               <li><router-link class="dropdown-item" to="/dashboard">Dahsboard</router-link></li>
+              <li><a href="#" @click="logout" class="dropdown-item">Logout</a></li>
             </ul>
           </li>
         </ul>

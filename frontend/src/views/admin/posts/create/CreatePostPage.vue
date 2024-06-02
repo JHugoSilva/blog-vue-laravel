@@ -2,12 +2,12 @@
 //@ts-nocheck
 import useVuelidate from "@vuelidate/core";
 import { ref } from "vue";
-import Error from "../../components/Error.vue";
+import Error from "../../../../components/Error.vue";
 import { required } from "@vuelidate/validators";
-import type { ICreatePostInput } from './admin-types'
+import type { ICreatePostInput } from './types/create'
 import { createPostHttp } from './actions/CreatePost'
-import BaseBtn from "../../components/BaseBtn.vue";
-import { showError, successMsg } from "../../helper/Toatnotification";
+import BaseBtn from "../../../../components/BaseBtn.vue";
+import { showError, successMsg } from "../../../../helper/Toatnotification";
 
 const postInput = ref<ICreatePostInput>({
     title: '',

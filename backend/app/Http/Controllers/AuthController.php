@@ -17,7 +17,6 @@ class AuthController extends Controller
 {
 
     public function register(RegisterRequest $request) {
-        print_r($request->all());
         $user = User::create($request->getData());
 
         return response()->json([
@@ -47,8 +46,14 @@ class AuthController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function logout(Request $request) {
-        $userId = $request->user_id;
+    public function loggedIn() {
+        return response()->json([
+            'message' => ''
+        ], Response::HTTP_OK);
+    }
+
+    public function logout() {
+        $userId = auth()->user()->id;
         DB::table('personal_access_tokens')
         ->where('tokenable_id', $userId)->delete();
 

@@ -5,9 +5,6 @@ const props = defineProps<{
     btnwidth: string
 }>()
 
-const btnw = props.btnwidth
-console.log(btnw);
-
 </script>
 
 <template>

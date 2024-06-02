@@ -14,6 +14,12 @@ TypeScript cannot handle type information for `.vue` imports by default, so we r
 
 See [Vite Configuration Reference](https://vitejs.dev/config/).
 
+## VUE LARAVEL PAGINATION
+
+```sh
+npm install laravel-vue-pagination
+```
+
 ## VUE VALIDATOR
 
 ```sh
@@ -37,6 +43,7 @@ npm install --save vue-toastification@next
 ```sh
 npm install --save bootstrap
 npm install --save @popperjs/core
+npm i bootstrap-icons
 ```
 
 ## Project Setup

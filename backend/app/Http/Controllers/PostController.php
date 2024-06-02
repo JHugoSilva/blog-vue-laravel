@@ -13,16 +13,15 @@ use App\Http\Requests\PostUpdateRequest;
 class PostController extends Controller
 {
     public function index(Request $request) {
-
         $param = $request->get('query');
 
-        $model = Post::where(function($query) use($param) {
+        $model = Post::latest()->where(function($query) use($param) {
             if (!empty($param)) {
                 $query->where('title', 'LIKE', '%'.$param.'%');
             }
         })->paginate(3);
 
-        return response()->json([$model], Response::HTTP_OK);
+        return response()->json($model, Response::HTTP_OK);
 
     }
 
@@ -31,7 +30,7 @@ class PostController extends Controller
         $post = Post::create($request->validated());
 
         return response()->json([
-            'post' => $post
+            'message' => 'CREATED'
         ], Response::HTTP_CREATED);
     }
 
@@ -51,14 +50,14 @@ class PostController extends Controller
         $post = Post::find($id);
         if (!$post) {
             return response()->json([
-                'post' => 'Not Found.'
+                'message' => 'Not Found.'
             ], Response::HTTP_NOT_FOUND);
         }
 
         $post->delete();
 
         return response()->json([
-            'post' => 'DELETED'
+            'message' => 'DELETED'
         ], Response::HTTP_OK);
     }
 
