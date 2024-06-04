@@ -41,6 +41,7 @@ class PostController extends Controller
         $post->update($request->validated());
 
         return response()->json([
+            'message' => 'POST UPDATE',
             'post' => $post
         ], Response::HTTP_OK);
     }
@@ -76,6 +77,7 @@ class PostController extends Controller
             ]);
 
             return response()->json([
+                'message' => 'UPLOAD',
                 'image' => $imageURL
             ], Response::HTTP_OK);
         }

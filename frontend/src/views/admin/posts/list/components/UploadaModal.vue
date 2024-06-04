@@ -1,12 +1,11 @@
 <script setup lang="ts">
 import { ref } from 'vue';
-import { getUserData } from '../../../../../helper/getUserData';
 import { showError, successMsg } from '../../../../../helper/Toatnotification';
 import { getSelectedImage } from '../../../../../helper/uploadImage';
-import { APP } from '../../../../../shared/App';
+import { uploadPostHttp } from '../actions/uploadImagePost'
 
 const props = defineProps<{ postId: number }>()
-const emit = defineEmits<{ (e: 'closeModal'): void }>()
+const emit = defineEmits<{ (e: 'closeModal'): void, (e: 'refreshTable'): void }>()
 const image = ref<any>()
 
 function selectImage(e: any) {
@@ -14,31 +13,22 @@ function selectImage(e: any) {
     image.value = selectedImage
 }
 
-function uploadImageHeader(file: any, postId: number) {
-    const userData = getUserData()
-    const headers = new Headers()
-    headers.append('Authorization', 'Bearer ' + userData?.token)
-    const formData = new FormData()
-    formData.append('image', file)
-    formData.append('post_id', postId.toString())
-    const requestOptions = {
-        method: 'POST',
-        headers: headers,
-        body: formData
-    }
-
-    return requestOptions
-}
-
-const uploadImage = async () => {
+const uploadImage = async (e: any) => {
     try {
-        const reqOptions = uploadImageHeader(image.value, props.postId)
-        const response = await fetch(`${APP.apiUrl}/post/upload`, reqOptions)
-        const data = await response.json()
-        successMsg(data.message)
+        if (image.value !== '' && image.value !== undefined) {
+            const data = await uploadPostHttp(image.value, props.postId)
+            successMsg(data.message)
+            image.value = ''
+            const imgTag = document.getElementById('outputImage') as HTMLImageElement
+            imgTag.src = '';
+            e.target.reset()
+            emit('closeModal')
+            emit('refreshTable')
+        } else {
+            showError('Selecionar uma imagem e obrigatorio')
+        }
     } catch (error: any) {
         showError(error?.message)
-
     }
 }
 </script>
@@ -46,7 +36,6 @@ const uploadImage = async () => {
     <!-- Modal -->
     <div class="modal fade" id="postModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog">
-            {{ image }} --{{ props.postId }}
             <div class="modal-content">
                 <form @submit.prevent="uploadImage" enctype="multipart/form-data">
                     <div class="modal-header">
@@ -66,7 +55,7 @@ const uploadImage = async () => {
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" @click="emit('closeModal')"
                             data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary">Save changes</button>
+                        <button type="submit" class="btn btn-primary">Upload</button>
                     </div>
                 </form>
             </div>

@@ -5,13 +5,19 @@ import { ref } from "vue";
 import Error from "../../../../components/Error.vue";
 import { required } from "@vuelidate/validators";
 import type { ICreatePostInput } from './types/create'
+import type { IUpdatePostInput } from './types/update'
 import { createPostHttp } from './actions/CreatePost'
+import { updatePostHttp } from './actions/UpdatePost'
 import BaseBtn from "../../../../components/BaseBtn.vue";
 import { showError, successMsg } from "../../../../helper/Toatnotification";
+import { postStore } from '@/stores/admin/postStore'
+import { useRouter } from 'vue-router'
 
-const postInput = ref<ICreatePostInput>({
-    title: '',
-    post_content: ''
+const router = useRouter()
+const postInput = ref<ICreatePostInput | IUpdatePostInput>({
+    id: postStore.editPostData.id,
+    title: postStore.editPostData.title,
+    post_content: postStore.editPostData.post_content
 })
 
 const rules = {
@@ -22,16 +28,14 @@ const rules = {
 const v$ = useVuelidate(rules, postInput)
 const loadingStatus = ref(false)
 
-const createPost = async () => {
+const createOrUpdatePost = async () => {
     const result = v$.value.$validate()
 
     if (!result) return
 
     try {
         loadingStatus.value = true
-        const data = await createPostHttp(postInput.value)
-        successMsg(data.message)
-        postInput.value = {} as ICreatePostInput
+        postStore.editPost.edit ? await updatePost() : createPost()
         v$.value.$reset()
         loadingStatus.value = false
     } catch (error: any) {
@@ -42,15 +46,30 @@ const createPost = async () => {
     }
 }
 
+const createPost = async () => {
+    const data = await createPostHttp(postInput.value)
+    postInput.value = {} as ICreatePostInput
+    successMsg(data.message)
+}
+
+const updatePost = async () => {
+    const data = await updatePostHttp(postInput.value as IUpdatePostInput)
+    postStore.editPostData = {} as IUpdatePostInput
+    postInput.value = {} as ICreatePostInput
+    postStore.editPost.edit = false
+    router.push('/list-post')
+    successMsg(data.message)
+}
+
 </script>
 
 <template>
     <div class="card mt-5">
         <div class="card-header">
-            Create Post
+            Create Post {{ postStore.editPostData }}
         </div>
         <div class="card-body">
-            <form @submit.prevent="createPost">
+            <form @submit.prevent="createOrUpdatePost">
                 <Error input-label="Title" :form-errors="v$.title.$errors">
                     <input type="text" class="form-control" v-model="postInput.title">
                 </Error>
@@ -61,7 +80,9 @@ const createPost = async () => {
                     </Error>
                 </div>
                 <div class="mb-3 d-flex justify-content-around">
-                    <BaseBtn label="Create post" :loading="loadingStatus" btnwidth="w-40" />
+                    <BaseBtn :class="postStore.editPost.edit ? 'btn btn-warning' : 'btn btn-success'"
+                        :label="postStore.editPost.edit ? 'Update post' : 'Create post'" :loading="loadingStatus"
+                        btnwidth="w-40" />
                     <router-link class="btn btn-primary w-40 p-3" to="/list-post">List Post</router-link>
                 </div>
             </form>
