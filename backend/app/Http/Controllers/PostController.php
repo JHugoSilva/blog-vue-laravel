@@ -61,10 +61,9 @@ class PostController extends Controller
         ], Response::HTTP_OK);
     }
 
-    public function addImage(PostImageRequest $request) {
+    public function addImage(Request $request) {
         if ($request->hasFile('image')) {
             $image = $request->file('image');
-
             $input['file'] = time().'.'.$image->getClientOriginalExtension();
 
             Storage::disk('public')->put('images/'.$input['file'], file_get_contents($image));
@@ -80,6 +79,5 @@ class PostController extends Controller
                 'image' => $imageURL
             ], Response::HTTP_OK);
         }
-
     }
 }

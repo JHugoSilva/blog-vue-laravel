@@ -4,8 +4,8 @@ export function verifyToken() {
   const userData = getUserData()
   const config = {
     headers: {
-      accept: 'application/json',
-      'content-Type': 'application/json',
+      Accept: 'application/json',
+      'Content-type': 'application/json, multipart/form-data',
       Authorization: `Bearer ${userData?.token}`
     }
   }

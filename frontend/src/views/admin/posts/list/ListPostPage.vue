@@ -2,12 +2,14 @@
 //@ts-nocheck
 import { onMounted, ref } from "vue";
 import { getPostHttp } from './actions/GetPostList'
-import { myDebounce } from '../../../../helper/util'
+import { closeModal, myDebounce, openModal } from '../../../../helper/util'
 import { Bootstrap5Pagination } from 'laravel-vue-pagination';
 import { confirmDelation } from '../../../../helper/SweetAlert'
 import { deletePostHttp } from './actions/DeletePost'
 import { showError, successMsg } from "../../../../helper/Toatnotification";
 import Tables from "./components/Tables.vue";
+import UploadaModal from "./components/UploadaModal.vue";
+
 
 const posts = ref<getResponseType>()
 const query = ref<string>('')
@@ -31,32 +33,20 @@ const deletePost = (id, i) => {
     })
 }
 
-const showModal = (postId: number) => {
-    console.log(postId);
-
+const currentPostId = ref<number>(0)
+const showModal = async (postId: number) => {
+    openModal('postModal', postId).then(postId => {
+        currentPostId.value = postId
+    })
 }
+
+
 
 onMounted(async () => {
     await showPost()
 })
 
-function openModal(element: string) {
-    var modal = document.getElementById() as HTMLElement
-    AULA - 12 TEMPO - 31: 54
-    if (modal) {
-        setTimeout(() => {
-            modal.classList.add('fade', 'show')
-            modal.style.display = 'block'
-            modal.classList.add('in')
-        }, 500)
 
-        document.body.classList.add('modal-open')
-
-        var modalBackdrop = document.createElement('div')
-        modalBackdrop.className = 'modal-backdrop fade show'
-        document.body.appendChild(modalBackdrop)
-    }
-}
 </script>
 <template>
     <div class="card mt-5">
@@ -66,6 +56,7 @@ function openModal(element: string) {
         </div>
     </div>
     <div class="card mt-5">
+        <UploadaModal :post-id="currentPostId" @close-modal="closeModal('postModal')" />
         <Tables :posts="posts" @delete-post="deletePost" @showModal="showModal" />
         <div v-if="posts" class="pagination justify-content-center">
             <Bootstrap5Pagination :data="posts" @pagination-change-page="showPost" />
